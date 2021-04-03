@@ -19,32 +19,47 @@ class Cipher:
                 result_text += chr((ord(char) + int(self.key) - 65) % 26 + 65)
             elif char == ' ':
                 result_text += ' '
+            elif char in string.punctuation:
+                result_text += char
             else:
                 result_text += chr((ord(char) + int(self.key) - 97) % 26 + 97)
 
-        print(b64encode(result_text.encode('utf-8')).decode('utf-8'))
+        encoded_message = result_text.encode('utf-8')
+        for _ in range(int(self.key)):
+            encoded_message = b64encode(encoded_message)
+            
+        print(encoded_message.decode('utf-8'))
 
 
 class Decoder:
 
     def __init__(self, text):
         for message in text:
-            self.message = b64decode(message.encode('utf-8')).decode('utf-8')
+            self.message = message
 
     def decode_message(self):
+        import binascii
         for key in range(len(string.ascii_letters)):
-            translated = ''
-            for symbol in self.message:
-                if (symbol in string.ascii_letters):
-                    num = string.ascii_letters.find(symbol)
-                    num -= key
-                    if (num < 0):
-                        num += len(string.ascii_letters)
-                    translated += string.ascii_letters[num]
-                else:
-                    translated += symbol
+            try:
+                decoded_message = self.message.encode('utf-8')
+                for _ in range(key):
+                    decoded_message = b64decode(decoded_message)
 
-            print('Hacking key #%s: %s' % (key, translated))
+                translated = ''
+                for symbol in decoded_message.decode('utf-8'):
+                    if (symbol in string.ascii_letters):
+                        num = string.ascii_letters.find(symbol)
+                        num -= key
+                        if (num < 0):
+                            num += len(string.ascii_letters)
+                        translated += string.ascii_letters[num]
+                    else:
+                        translated += symbol
+
+                print('Key Test #%s: %s' % (key, translated))
+            except (binascii.Error, UnicodeDecodeError):
+                print('\nKey Found! #%s' % (key - 1))
+                break
 
 
 if __name__ == '__main__':
