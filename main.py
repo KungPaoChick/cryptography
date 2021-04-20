@@ -27,7 +27,7 @@ class Cipher:
         encoded_message = result_text.encode('utf-8')
         for _ in range(int(self.key)):
             encoded_message = b64encode(encoded_message)
-            
+
         print(encoded_message.decode('utf-8'))
 
 
@@ -67,14 +67,14 @@ if __name__ == '__main__':
                                      description='Encodes and Decodes.')
 
     parser.add_argument('-m', '--message',
-                        nargs=1, action='store',
+                        nargs=1, type=int, action='store',
                         help='Encodes input text. Required Argument is key shift. (e.g. -m 3)')
 
     parser.add_argument('-d', '--decode',
                         nargs=1, metavar='DECODE',
                         action='store',
                         help="Brute Forces to decode a Caesar Cipher Text. (e.g. -d 'TnJza25zamM=')")
-    
+
     args = parser.parse_args()
 
     if args.message:
